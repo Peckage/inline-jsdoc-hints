@@ -1,0 +1,110 @@
+{
+  "name": "inline-jsdoc-hints",
+  "displayName": "Inline JSDoc Hints",
+  "description": "Shows the JSDoc summary of a symbol inline in the VS Code completion list row, without requiring the documentation panel to be expanded.",
+  "version": "0.1.0",
+  "publisher": "ia-sol",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.90.0",
+    "node": ">=18.0.0"
+  },
+  "categories": ["Other", "Programming Languages"],
+  "keywords": ["jsdoc", "intellisense", "typescript", "autocomplete", "completions"],
+  "activationEvents": [
+    "onLanguage:typescript",
+    "onLanguage:typescriptreact",
+    "onLanguage:javascript",
+    "onLanguage:javascriptreact"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "inline-jsdoc-hints.addToTsConfig",
+        "title": "Inline JSDoc Hints: Add Plugin to tsconfig.json"
+      },
+      {
+        "command": "inline-jsdoc-hints.removeFromTsConfig",
+        "title": "Inline JSDoc Hints: Remove Plugin from tsconfig.json"
+      }
+    ],
+    "configuration": {
+      "title": "Inline JSDoc Hints",
+      "properties": {
+        "inlineJsdocHints.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Master on/off switch for Inline JSDoc Hints."
+        },
+        "inlineJsdocHints.maxLength": {
+          "type": "integer",
+          "default": 72,
+          "minimum": 20,
+          "maximum": 120,
+          "description": "Maximum characters of the JSDoc first sentence shown inline. Truncated with '…' if longer."
+        },
+        "inlineJsdocHints.extractionStrategy": {
+          "type": "string",
+          "enum": ["firstSentence", "firstLine", "full"],
+          "default": "firstSentence",
+          "enumDescriptions": [
+            "Up to the first '. ' or end of text.",
+            "Up to the first newline.",
+            "Entire JSDoc summary (respects maxLength)."
+          ],
+          "description": "Controls how the JSDoc description is extracted."
+        },
+        "inlineJsdocHints.showInDetail": {
+          "type": "boolean",
+          "default": false,
+          "description": "When true, appends the description to the existing detail field (type signature) instead of labelDetails.description."
+        },
+        "inlineJsdocHints.includeLanguages": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": ["typescript", "typescriptreact", "javascript", "javascriptreact"],
+          "description": "Languages the fallback CompletionItemProvider activates for."
+        },
+        "inlineJsdocHints.fallbackProviderEnabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable the fallback CompletionItemProvider (for non-TS workspaces or when the TS plugin is unavailable)."
+        },
+        "inlineJsdocHints.ignoredSymbolPrefixes": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": [],
+          "description": "Completion item labels starting with any of these strings are skipped (e.g., ['__', '$internal'])."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "node scripts/build.js --production",
+    "dev": "node scripts/build.js --watch",
+    "package": "npm run build && vsce package",
+    "test": "npm run build && node scripts/compileTests.js && node dist/test/runTests.js",
+    "test:unit": "node scripts/compileTests.js && node scripts/runUnitTests.js",
+    "lint": "eslint src test --ext .ts",
+    "format": "prettier --write 'src/**/*.ts' 'test/**/*.ts' 'scripts/**/*.ts'"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.6",
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.90.0",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "@vscode/test-electron": "^2.3.9",
+    "@vscode/vsce": "^2.24.0",
+    "esbuild": "^0.20.2",
+    "eslint": "^8.57.0",
+    "mocha": "^10.3.0",
+    "prettier": "^3.2.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "jsonc-parser": "^3.2.1"
+  }
+}

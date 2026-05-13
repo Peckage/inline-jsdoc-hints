@@ -1,0 +1,11 @@
+src/**
+test/**
+scripts/**
+tsconfig*.json
+*.map
+.eslintrc.json
+.prettierrc.json
+node_modules/**
+.vscode/**
+**/*.ts
+!dist/**
