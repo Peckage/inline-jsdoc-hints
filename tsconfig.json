@@ -16,7 +16,8 @@
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "types": ["node", "vscode"]
   },
   "include": ["src/**/*"],
   "exclude": ["src/plugin/**/*", "node_modules", "dist"]

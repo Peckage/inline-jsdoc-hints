@@ -202,11 +202,11 @@ function init(modules: { typescript: typeof ts }): ts.server.PluginModule {
 
   function createProxy(languageService: ts.LanguageService): ts.LanguageService {
     const proxy = Object.create(null) as ts.LanguageService;
-    for (const key of Object.keys(languageService) as Array<keyof ts.LanguageService>) {
-      const original = languageService[key];
+    const svc = languageService as unknown as Record<string, unknown>;
+    for (const key of Object.keys(svc)) {
+      const original = svc[key];
       if (typeof original === 'function') {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (proxy as Record<string, unknown>)[key] = (...args: unknown[]): unknown =>
+        (proxy as unknown as Record<string, unknown>)[key] = (...args: unknown[]): unknown =>
           (original as (...a: unknown[]) => unknown).apply(languageService, args);
       }
     }

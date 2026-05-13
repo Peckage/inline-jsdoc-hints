@@ -14,8 +14,9 @@
     "forceConsistentCasingInFileNames": true,
     "declaration": false,
     "sourceMap": true,
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "types": ["node"]
   },
-  "include": ["src/plugin/**/*", "src/utils/extractDescription.ts", "src/constants.ts"],
+  "include": ["src/plugin/**/*"],
   "exclude": ["node_modules", "dist"]
 }
