@@ -3,7 +3,7 @@
   "displayName": "Inline JSDoc Hints",
   "description": "Shows the JSDoc summary of a symbol inline in the VS Code completion list row, without requiring the documentation panel to be expanded.",
   "version": "0.1.0",
-  "publisher": "ia-sol",
+  "publisher": "Peckage",
   "license": "MIT",
   "engines": {
     "vscode": "^1.90.0",
