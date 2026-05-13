@@ -5,7 +5,9 @@ tsconfig*.json
 *.map
 .eslintrc.json
 .prettierrc.json
+.gitignore
 node_modules/**
 .vscode/**
 **/*.ts
 !dist/**
+dist/test/**
