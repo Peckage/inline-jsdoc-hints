@@ -68,6 +68,12 @@ function init(modules: { typescript: typeof ts }): ts.server.PluginModule {
     const ignoredPrefixes = config.ignoredSymbolPrefixes ?? [];
     const showInDetail = config.showInDetail ?? false;
 
+    // Cap how many items we call getCompletionEntryDetails on to avoid
+    // lagging large completion lists. Prioritise the first items (most
+    // relevant) and leave the tail unenhanced rather than blocking the UI.
+    const DETAIL_CAP = 60;
+    let detailCalls = 0;
+
     const enhanced = original.entries.map((entry) => {
       try {
         return enhanceEntry(info, config, fileName, position, entry, {
@@ -75,6 +81,8 @@ function init(modules: { typescript: typeof ts }): ts.server.PluginModule {
           strategy,
           ignoredPrefixes,
           showInDetail,
+          canCallDetails: detailCalls < DETAIL_CAP,
+          onDetailCalled: () => { detailCalls++; },
         });
       } catch {
         return entry;
@@ -89,6 +97,8 @@ function init(modules: { typescript: typeof ts }): ts.server.PluginModule {
     strategy: NonNullable<PluginConfig['extractionStrategy']>;
     ignoredPrefixes: string[];
     showInDetail: boolean;
+    canCallDetails: boolean;
+    onDetailCalled: () => void;
   }
 
   function enhanceEntry(
@@ -107,6 +117,13 @@ function init(modules: { typescript: typeof ts }): ts.server.PluginModule {
     if (entry.labelDetails?.description) {
       return entry;
     }
+
+    // Respect the per-list cap to avoid blocking the UI on large lists
+    if (!opts.canCallDetails) {
+      return entry;
+    }
+
+    opts.onDetailCalled();
 
     const details = info.languageService.getCompletionEntryDetails(
       fileName,
@@ -135,7 +152,12 @@ function init(modules: { typescript: typeof ts }): ts.server.PluginModule {
     if (opts.showInDetail) {
       return {
         ...entry,
-        kindModifiers: entry.kindModifiers,
+        labelDetails: {
+          ...(entry.labelDetails ?? {}),
+          detail: entry.labelDetails?.detail
+            ? `${entry.labelDetails.detail}  —  ${description}`
+            : `  —  ${description}`,
+        },
       };
     }
 
